@@ -54,107 +54,72 @@ export default function HomePage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
-const [isSending, setIsSending] = useState(false);
+  const [isSending, setIsSending] = useState(false);
 
-const handleSendMessage = async (e: React.FormEvent) => {
-  e.preventDefault();
-  
-  // Don't send if fields are empty
-  if (!name || !email || !message) return; 
-  
-  setIsSending(true);
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !email || !message) return; 
+    
+    setIsSending(true);
 
-  try {
-    const response = await fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        access_key: "7bdfdabd-909d-4b07-84b9-e1f16dd9e766",
-        name: name,
-        email: email,
-        message: message,
-      }),
-    });
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: "7bdfdabd-909d-4b07-84b9-e1f16dd9e766",
+          name: name,
+          email: email,
+          message: message,
+        }),
+      });
 
-    const result = await response.json();
-    if (result.success) {
-      setIsSent(true);
-    }
-  } catch (error) {
-    console.error("Error sending message:", error);
-  } finally {
-    setIsSending(false);
-  }
-};
-
-useEffect(() => {
-  const handleScroll = () => {
-    // Check if user scrolled down more than 50px
-    if (window.scrollY > 50) {
-      setIsScrolled(true);
-    } else {
-      setIsScrolled(false);
+      const result = await response.json();
+      if (result.success) {
+        setIsSent(true);
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+    } finally {
+      setIsSending(false);
     }
   };
 
-  // Listen for scroll events
-  window.addEventListener('scroll', handleScroll);
-  
-  // Run it once on load just in case the page is already scrolled
-  handleScroll(); 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
 
-  // Cleanup
-  return () => window.removeEventListener('scroll', handleScroll);
-}, []);
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); 
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-useEffect(() => {
-  const ctx = gsap.context(() => {
-    gsap.from(headerRef.current, {
-      y: -100,
-      opacity: 0,
-      duration: 1,
-      ease: 'power3.out',
-    });
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(headerRef.current, { y: -100, opacity: 0, duration: 1, ease: 'power3.out' });
 
-    const titleLines = titleRef.current?.querySelectorAll('span.animate-line');
-    gsap.from(titleLines || [], {
-      y: 100,
-      opacity: 0,
-      duration: 1.2,
-      stagger: 0.15,
-      ease: 'power4.out',
-      delay: 0.3,
-    });
+      const titleLines = titleRef.current?.querySelectorAll('span.animate-line');
+      gsap.from(titleLines || [], { y: 100, opacity: 0, duration: 1.2, stagger: 0.15, ease: 'power4.out', delay: 0.3 });
+      gsap.from(descRef.current, { y: 30, opacity: 0, duration: 1, delay: 1, ease: 'power3.out' });
+      gsap.from(buttonRef.current, { scale: 0.8, opacity: 0, duration: 0.8, delay: 1.2, ease: 'back.out(1.7)' });
 
-    gsap.from(descRef.current, {
-      y: 30,
-      opacity: 0,
-      duration: 1,
-      delay: 1,
-      ease: 'power3.out',
-    });
-
-    gsap.from(buttonRef.current, {
-      scale: 0.8,
-      opacity: 0,
-      duration: 0.8,
-      delay: 1.2,
-      ease: 'back.out(1.7)',
-    });
-
-    gsap.to(imageContainerRef.current, {
-      y: -50,
-      scrollTrigger: {
-        trigger: imageContainerRef.current,
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: 1,
-      },
-    });
-
+      gsap.to(imageContainerRef.current, {
+        y: -50,
+        scrollTrigger: {
+          trigger: imageContainerRef.current,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1,
+        },
+      });
 
       const handleMouseMove = (e: MouseEvent) => {
         const { clientX, clientY } = e;
@@ -162,10 +127,7 @@ useEffect(() => {
         const y = (clientY / window.innerHeight - 0.5) * 20;
 
         gsap.to(imageContainerRef.current, {
-          x,
-          y,
-          duration: 0.5,
-          ease: 'power2.out',
+          x, y, duration: 0.5, ease: 'power2.out',
         });
       };
 
@@ -173,57 +135,32 @@ useEffect(() => {
 
       if (marqueeRef.current) {
         gsap.from(marqueeRef.current, {
-          opacity: 0,
-          y: 50,
-          duration: 1,
-          scrollTrigger: {
-            trigger: marqueeRef.current,
-            start: 'top 80%',
-            end: 'top 50%',
-            scrub: 1,
-          },
+          opacity: 0, y: 50, duration: 1,
+          scrollTrigger: { trigger: marqueeRef.current, start: 'top 80%', end: 'top 50%', scrub: 1 },
         });
       }
 
       if (orraRef.current) {
         const orraElements = orraRef.current.querySelectorAll('.animate-element');
         gsap.from(orraElements, {
-          opacity: 0,
-          y: 100,
-          duration: 1.2,
-          stagger: 0.2,
-          scrollTrigger: {
-            trigger: orraRef.current,
-            start: 'top 70%',
-          },
+          opacity: 0, y: 100, duration: 1.2, stagger: 0.2,
+          scrollTrigger: { trigger: orraRef.current, start: 'top 70%' },
         });
       }
 
       if (aboutRef.current) {
         const aboutElements = aboutRef.current.querySelectorAll('.animate-element');
         gsap.from(aboutElements, {
-          opacity: 0,
-          scale: 0.9,
-          duration: 1,
-          stagger: 0.15,
-          scrollTrigger: {
-            trigger: aboutRef.current,
-            start: 'top 70%',
-          },
+          opacity: 0, scale: 0.9, duration: 1, stagger: 0.15,
+          scrollTrigger: { trigger: aboutRef.current, start: 'top 70%' },
         });
       }
 
       if (contactRef.current) {
         const formElements = contactRef.current.querySelectorAll('.form-element');
         gsap.from(formElements, {
-          opacity: 0,
-          x: -30,
-          duration: 0.8,
-          stagger: 0.1,
-          scrollTrigger: {
-            trigger: contactRef.current,
-            start: 'top 70%',
-          },
+          opacity: 0, x: -30, duration: 0.8, stagger: 0.1,
+          scrollTrigger: { trigger: contactRef.current, start: 'top 70%' },
         });
       }
 
@@ -236,7 +173,7 @@ useEffect(() => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans">
+    <div className="min-h-screen bg-black text-white font-sans overflow-x-hidden">
       <style jsx global>{`
       html { scroll-behavior: smooth; }
         @keyframes marquee-left {
@@ -256,21 +193,17 @@ useEffect(() => {
       `}</style>
 
       {/* --- HEADER --- */}
-      {/* The outer div handles the slide-down and centering animation */}
-      {/* --- HEADER --- */}
-      {/* Move ref={headerRef} HERE to the outer container so GSAP doesn't block Tailwind */}
-      <div ref={headerRef} className={`fixed top-0 left-0 right-0 z-50 flex justify-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isScrolled ? 'pt-6' : 'pt-0'}`}>
-        
+      <div ref={headerRef} className={`fixed top-0 left-0 right-0 z-50 flex justify-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isScrolled ? 'pt-4 md:pt-6 px-4 md:px-0' : 'pt-0'}`}>
         <header 
           className={`
             flex items-center justify-between backdrop-blur-md transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden
             ${isScrolled 
-              ? 'w-[95%] lg:w-[65%] py-3 px-8 bg-[#111111]/90 rounded-full border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.8)]' // Scrolled State
-              : 'w-full py-8 px-6 md:px-12 bg-black/20 rounded-none border-b border-transparent' // Top State
+              ? 'w-full md:w-[95%] lg:w-[65%] py-3 px-6 md:px-8 bg-[#111111]/90 rounded-full border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.8)]' 
+              : 'w-full py-6 md:py-8 px-6 md:px-12 bg-black/20 rounded-none border-b border-transparent' 
             }
           `}
         >
-          <div className="text-3xl font-semibold tracking-tighter text-white">JEE</div>
+          <div className="text-2xl md:text-3xl font-semibold tracking-tighter text-white">JEE</div>
           
           <nav className={`flex items-center transition-all duration-500 ${isScrolled ? 'gap-4 md:gap-5' : 'gap-8'}`}>
             <a href="#work" className="text-xs text-gray-400 hover:text-white transition-colors uppercase tracking-widest hidden md:block">WORK</a>
@@ -281,74 +214,61 @@ useEffect(() => {
             <span className="text-gray-800 hidden md:block">|</span>
             <a href="#contact" className="text-xs text-gray-400 hover:text-white transition-colors uppercase tracking-widest hidden md:block">CONTACT</a>
             
-            <button className={`border border-gray-600 text-white rounded-full text-xs hover:bg-white hover:text-black transition-all uppercase tracking-widest ${isScrolled ? 'px-5 py-2.5 ml-2' : 'px-6 py-2.5 ml-4'}`}>
+            <button className={`border border-gray-600 text-white rounded-full text-[10px] md:text-xs hover:bg-white hover:text-black transition-all uppercase tracking-widest ${isScrolled ? 'px-4 py-2 md:px-5 md:py-2.5 ml-0 md:ml-2' : 'px-4 py-2 md:px-6 md:py-2.5 ml-0 md:ml-4'}`}>
               GET IN TOUCH
             </button>
           </nav>
         </header>
-        
       </div>
 
-      <main className="relative min-h-screen flex items-center px-6 md:px-12 pt-24 overflow-hidden">
-        <div className="max-w-[1600px] mx-auto w-full relative min-h-[700px] flex items-center">
+      <main className="relative min-h-[90vh] md:min-h-screen flex items-center px-6 md:px-12 pt-32 md:pt-24 overflow-hidden">
+        <div className="max-w-[1600px] mx-auto w-full relative flex items-center">
           
-          <div className="space-y-8 relative w-full lg:w-3/4 z-0 -mt-45">
-            <h1 ref={titleRef} className="font-bold tracking-tighter leading-[0.95]">
-              
-              <div className="text-4xl md:text-6xl lg:text-[4rem] xl:text-[5.5rem]">
+          <div className="space-y-6 md:space-y-8 relative w-full lg:w-3/4 z-10 md:z-0 md:-mt-45 mt-10">
+            <h1 ref={titleRef} className="font-bold tracking-tighter leading-[1.1] md:leading-[0.95]">
+              <div className="text-4xl sm:text-5xl md:text-6xl lg:text-[4rem] xl:text-[5.5rem]">
                 <span className="block text-white animate-line">CRAFTING FUTURE</span>
-                <span className="block text-white animate-line flex items-baseline gap-4">
+                <span className="block text-white animate-line flex flex-wrap items-baseline gap-2 md:gap-4">
                   CURIOSITIES 
-                 
                 </span>
               </div>
-
-              <div className="text-3xl md:text-5xl lg:text-[3rem] xl:text-[4.5rem] mt-2 md:mt-3">
+              <div className="text-3xl sm:text-4xl md:text-5xl lg:text-[3rem] xl:text-[4.5rem] mt-2 md:mt-3">
                 <span className="block text-gray-500 animate-line">THROUGH CODE,</span>
                 <span className="block text-gray-300 animate-line">MOTION & DESIGN</span>
               </div>
-
             </h1>
 
-            <p ref={descRef} className="text-gray-400 max-w-md text-sm md:text-base leading-relaxed font-light mt-8 relative z-20">
+            <p ref={descRef} className="text-gray-400 max-w-sm md:max-w-md text-sm md:text-base leading-relaxed font-light mt-6 md:mt-8 relative z-20">
               A portfolio of digital products and creative work by JEE.
-Focused on design, development, and innovation.
+              Focused on design, development, and innovation.
             </p>
-
-            
           </div>
 
-          {/* --- UPDATED POSITIONING HERE --- */}
-          {/* Changed top-[50%] to top-[20%] to pull the object right up to your blue mark */}
-          <div ref={imageContainerRef} className="absolute right-[-10%] md:right-[-9%] top-[40%] md:top-[30%] lg:top-[32%] -translate-y-1/2 w-[120%] md:w-[65%] lg:w-[55%] h-[500px] md:h-[600px] lg:h-[700px] z-10 opacity-80 md:opacity-100 pointer-events-none">
-            {/* Added pointer-events-none to the wrapper temporarily so it doesn't block the button underneath, 
-                Spline internal pointer events will still work if configured in Spline */}
+          <div ref={imageContainerRef} className="absolute right-[-20%] md:right-[-9%] top-[60%] sm:top-[50%] md:top-[30%] lg:top-[32%] -translate-y-1/2 w-[140%] sm:w-[100%] md:w-[65%] lg:w-[55%] h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] z-0 md:z-10 opacity-50 md:opacity-100 pointer-events-none">
             <div className="w-full h-full pointer-events-auto">
               <Spline scene="https://prod.spline.design/J-KIOElR9cdWmFdB/scene.splinecode" />
             </div>
           </div>
-
         </div>
       </main>
 
-      {/* Marquee, Orra, About, Contact, Footer sections remain identical... */}
-      <section ref={marqueeRef} className="relative -mt-70 py-32 overflow-hidden bg-[#050505]">
-        <div className="relative mb-8 overflow-hidden">
-          <div className="flex gap-6 marquee-left w-max">
+      <section ref={marqueeRef} className="relative py-20 md:py-32 overflow-hidden bg-[#050505]">
+        <div className="relative mb-6 md:mb-8 overflow-hidden">
+          <div className="flex gap-4 md:gap-6 marquee-left w-max">
             {[...Array(2)].map((_, groupIndex) => (
-              <div key={groupIndex} className="flex gap-6 shrink-0">
+              <div key={groupIndex} className="flex gap-4 md:gap-6 shrink-0">
                 {['Web Developing', 'App Developing', 'Music Production', 'Freelancing', 'Game Dev', 'AI Content Creating'].map((skill, index) => (
                   <div
                     key={`${groupIndex}-${index}`}
                     className={`
-                      px-12 py-8 rounded-2xl backdrop-blur-sm border
+                      px-6 py-4 md:px-12 md:py-8 rounded-xl md:rounded-2xl backdrop-blur-sm border
                       transition-all duration-500 cursor-pointer shrink-0
                       ${index === 1 && groupIndex === 0
-                        ? 'bg-black/40 border-purple-500/60 shadow-[0_0_30px_rgba(168,85,247,0.4)] scale-105 hover:scale-110'
+                        ? 'bg-black/40 border-purple-500/60 shadow-[0_0_20px_rgba(168,85,247,0.3)] md:shadow-[0_0_30px_rgba(168,85,247,0.4)] scale-105 hover:scale-110'
                         : 'bg-black/20 border-gray-800/50 hover:border-gray-600 hover:scale-105'}
                     `}
                   >
-                    <span className="text-lg text-gray-200 font-light tracking-wide whitespace-nowrap">{skill}</span>
+                    <span className="text-sm md:text-lg text-gray-200 font-light tracking-wide whitespace-nowrap">{skill}</span>
                   </div>
                 ))}
               </div>
@@ -357,15 +277,15 @@ Focused on design, development, and innovation.
         </div>
 
         <div className="relative overflow-hidden">
-          <div className="flex gap-6 marquee-right w-max">
+          <div className="flex gap-4 md:gap-6 marquee-right w-max">
             {[...Array(2)].map((_, groupIndex) => (
-              <div key={groupIndex} className="flex gap-6 shrink-0">
+              <div key={groupIndex} className="flex gap-4 md:gap-6 shrink-0">
                 {['Web Developing', 'App Developing', 'Music Production', 'Freelancing', 'Game Dev', 'AI Content Creating'].map((skill, index) => (
                   <div
                     key={`${groupIndex}-${index}`}
-                    className="px-12 py-8 rounded-2xl backdrop-blur-sm border bg-black/20 border-gray-800/50 hover:border-gray-600 transition-all duration-500 cursor-pointer hover:scale-105 shrink-0"
+                    className="px-6 py-4 md:px-12 md:py-8 rounded-xl md:rounded-2xl backdrop-blur-sm border bg-black/20 border-gray-800/50 hover:border-gray-600 transition-all duration-500 cursor-pointer hover:scale-105 shrink-0"
                   >
-                    <span className="text-lg text-gray-200 font-light tracking-wide whitespace-nowrap">{skill}</span>
+                    <span className="text-sm md:text-lg text-gray-200 font-light tracking-wide whitespace-nowrap">{skill}</span>
                   </div>
                 ))}
               </div>
@@ -374,168 +294,121 @@ Focused on design, development, and innovation.
         </div>
       </section>
 
-      <section ref={orraRef} className="relative pt-10 pb-40 px-6 md:px-12 bg-black">
+      <section ref={orraRef} className="relative pt-10 pb-24 md:pb-40 px-6 md:px-12 bg-black">
         <div className="max-w-[1600px] mx-auto">
-          <div className="grid md:grid-cols-2 gap-20 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
             
-            {/* --- LEFT SIDE: YOUR NEW APP PREVIEW COMPONENT --- */}
-            <div className="animate-element relative">
+            <div className="animate-element relative order-2 md:order-1 mt-8 md:mt-0">
               <OrraAppPreview />
             </div>
 
-            {/* The Text for Orra App */}
-            <div className="space-y-8 animate-element">
-              {/* 1. Changed font-light to font-extrabold for bigger weight */}
-              <h2 className="text-6xl md:text-7xl font-medium tracking-tight leading-tight">
+            <div className="space-y-6 md:space-y-8 animate-element order-1 md:order-2">
+              <h2 className="text-5xl sm:text-6xl md:text-7xl font-medium tracking-tight leading-tight">
                 <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">ORRA</span>
               </h2>
-              <p className="text-xl text-gray-400 leading-relaxed max-w-lg">
+              <p className="text-lg md:text-xl text-gray-400 leading-relaxed max-w-lg">
                 A revolutionary app that transforms the way you interact with digital experiences.
                 Seamlessly blending design and functionality for an unparalleled user journey.
               </p>
-              <ul className="space-y-4 text-gray-500">
-                <li className="flex items-center gap-3"><span className="w-1.5 h-1.5 rounded-full bg-purple-500" />Intuitive gesture controls</li>
-                <li className="flex items-center gap-3"><span className="w-1.5 h-1.5 rounded-full bg-pink-500" />AI-powered personalization</li>
-                <li className="flex items-center gap-3"><span className="w-1.5 h-1.5 rounded-full bg-purple-500" />Real-time collaboration</li>
+              <ul className="space-y-3 md:space-y-4 text-gray-500 text-sm md:text-base">
+                <li className="flex items-center gap-3"><span className="w-1.5 h-1.5 rounded-full bg-purple-500 shrink-0" />Intuitive gesture controls</li>
+                <li className="flex items-center gap-3"><span className="w-1.5 h-1.5 rounded-full bg-pink-500 shrink-0" />AI-powered personalization</li>
+                <li className="flex items-center gap-3"><span className="w-1.5 h-1.5 rounded-full bg-purple-500 shrink-0" />Real-time collaboration</li>
               </ul>
               
-              {/* Button Container */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 pt-4">
-                
-                {/* 2. YouTube Style Interactive Button */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-4">
                 <button 
                   onClick={() => {
-                    setIsDownloaded(true); // Changes the button look instantly
-                    
-                    // Creates an invisible link to your APK and clicks it
+                    setIsDownloaded(true);
                     const link = document.createElement('a');
-                    link.href = '/orra.apk'; // This must match the exact file name in your public folder!
-                    link.download = 'ORRA_App_v1.apk'; // This is the name the file will save as on the user's computer
+                    link.href = '/orra.apk';
+                    link.download = 'ORRA_App_v1.apk';
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
                   }}
                   className={`
-                    group relative px-10 py-4 rounded-full overflow-hidden transition-all duration-300 ease-out active:scale-90
-                    ${isDownloaded 
-                      ? 'bg-[#272727] text-white hover:bg-[#3f3f3f]' 
-                      : 'bg-white text-black'}
+                    group relative px-8 md:px-10 py-4 rounded-full overflow-hidden transition-all duration-300 ease-out active:scale-90 text-center
+                    ${isDownloaded ? 'bg-[#272727] text-white hover:bg-[#3f3f3f]' : 'bg-white text-black'}
                   `}
                 >
                   {isDownloaded ? 'Downloaded' : 'Download APK'}
                 </button>
-
-                {/* 3. New Browser Continue Button */}
-                <button className="px-4 py-4 text-gray-400 hover:text-white transition-colors duration-300 text-sm font-medium hover:underline underline-offset-4">
+                <button className="px-4 py-4 text-gray-400 hover:text-white transition-colors duration-300 text-sm font-medium hover:underline underline-offset-4 text-center">
                   Continue with browser
                 </button>
-
               </div>
             </div>
-            
           </div>
         </div>
       </section>
 
-      <section ref={aboutRef} id="about" className="relative  px-6 md:px-12 bg-[#050505]">
+      <section ref={aboutRef} id="about" className="relative py-24 px-6 md:px-12 bg-[#050505]">
         <div className="max-w-[1600px] mx-auto">
-          <div className="grid md:grid-cols-2 gap-20 items-center">
-            <div className="space-y-8 animate-element">
-              <h2 className="text-5xl md:text-6xl lg:text-7xl font-light leading-tight">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
+            <div className="space-y-6 md:space-y-8 animate-element">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light leading-tight">
                 <span className="block">Creating</span>
                 <span className="block bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">Digital</span>
                 <span className="block">Experiences</span>
               </h2>
-              <p className="text-xl text-gray-400 leading-relaxed max-w-lg">
+              <p className="text-lg md:text-xl text-gray-400 leading-relaxed max-w-lg">
                 I’m JEE — a multidisciplinary developer and creator,
-building interactive experiences, digital products, and immersive systems that push creative boundaries.
+                building interactive experiences, digital products, and immersive systems that push creative boundaries.
               </p>
-              <div className="flex gap-6 text-sm text-gray-500">
-                <div><div className="text-3xl text-white mb-2">3+</div><div>Years Experience</div></div>
-                <div><div className="text-3xl text-white mb-2">40+</div><div>Projects Completed</div></div>
-                <div><div className="text-3xl text-white mb-2">50+</div><div>Happy Clients</div></div>
+              <div className="grid grid-cols-2 sm:flex sm:flex-row gap-6 md:gap-8 text-sm text-gray-500 pt-4 md:pt-0">
+                <div><div className="text-2xl md:text-3xl text-white mb-1 md:mb-2">3+</div><div>Years Experience</div></div>
+                <div><div className="text-2xl md:text-3xl text-white mb-1 md:mb-2">40+</div><div>Projects Completed</div></div>
+                <div><div className="text-2xl md:text-3xl text-white mb-1 md:mb-2">50+</div><div>Happy Clients</div></div>
               </div>
             </div>
 
-            <div className="animate-element relative">
-              <div className="relative w-full max-w-[500px] mx-auto aspect-square">
-                {/* Background Glows */}
-                <div className="absolute top-10 right-10 w-64 h-64 bg-gradient-to-br from-purple-600/20 to-pink-600/20 rounded-full blur-3xl" />
-                <div className="absolute bottom-10 left-10 w-48 h-48 bg-gradient-to-tr from-pink-600/20 to-purple-600/20 blur-2xl" />
-                
-                {/* The New Animated Terminal */}
+            <div className="animate-element relative mt-10 md:mt-0">
+              <div className="relative w-full max-w-[400px] md:max-w-[500px] mx-auto aspect-square">
+                <div className="absolute top-10 right-10 w-48 md:w-64 h-48 md:h-64 bg-gradient-to-br from-purple-600/20 to-pink-600/20 rounded-full blur-3xl" />
+                <div className="absolute bottom-10 left-10 w-32 md:w-48 h-32 md:h-48 bg-gradient-to-tr from-pink-600/20 to-purple-600/20 blur-2xl" />
                 <div className="relative w-full h-full z-10">
                   <AnimatedTerminal />
                 </div>
-
-                {/* Decorative floating squares */}
-                <div className="absolute -bottom-6 -right-6 w-32 h-32 border-2 border-purple-500/40 rounded-2xl rotate-12 -z-10" />
-                <div className="absolute -top-6 -left-6 w-24 h-24 border-2 border-pink-500/40 rounded-full -z-10" />
+                <div className="absolute -bottom-4 md:-bottom-6 -right-4 md:-right-6 w-24 md:w-32 h-24 md:h-32 border-2 border-purple-500/40 rounded-xl md:rounded-2xl rotate-12 -z-10" />
+                <div className="absolute -top-4 md:-top-6 -left-4 md:-left-6 w-16 md:w-24 h-16 md:h-24 border-2 border-pink-500/40 rounded-full -z-10" />
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section ref={contactRef} id="contact" className="relative py-30 px-6 md:px-12 bg-black">
+      <section ref={contactRef} id="contact" className="relative py-20 md:py-30 px-6 md:px-12 bg-black">
         <div className="max-w-[800px] mx-auto">
-          <div className="text-center mb-20 space-y-6">
-            <h2 className="text-6xl md:text-7xl font-light">Let's <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Connect</span></h2>
-            <p className="text-gray-400 text-lg">Have a project in mind? Let's create something extraordinary together.</p>
+          <div className="text-center mb-12 md:mb-20 space-y-4 md:space-y-6">
+            <h2 className="text-5xl sm:text-6xl md:text-7xl font-light">Let's <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Connect</span></h2>
+            <p className="text-gray-400 text-base md:text-lg px-4">Have a project in mind? Let's create something extraordinary together.</p>
           </div>
 
-          <form onSubmit={handleSendMessage} className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <form onSubmit={handleSendMessage} className="space-y-6 md:space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
               <div className="form-element group">
-                <input 
-                  type="text" 
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  placeholder="Your Name" 
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-5 text-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:bg-white/10 focus:shadow-[0_0_30px_rgba(168,85,247,0.15)] transition-all duration-300" 
-                />
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} required placeholder="Your Name" 
+                  className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-5 md:px-6 py-4 md:py-5 text-base md:text-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-all duration-300" />
               </div>
               <div className="form-element group">
-                <input 
-                  type="email" 
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  placeholder="Your Email" 
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-5 text-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:bg-white/10 focus:shadow-[0_0_30px_rgba(168,85,247,0.15)] transition-all duration-300" 
-                />
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="Your Email" 
+                  className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-5 md:px-6 py-4 md:py-5 text-base md:text-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-all duration-300" />
               </div>
             </div>
 
             <div className="form-element group">
-              <textarea 
-                placeholder="Your Message" 
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                required
-                rows={5} 
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-5 text-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:bg-white/10 focus:shadow-[0_0_30px_rgba(168,85,247,0.15)] transition-all duration-300 resize-none" 
-              />
+              <textarea placeholder="Your Message" value={message} onChange={(e) => setMessage(e.target.value)} required rows={5} 
+                className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-5 md:px-6 py-4 md:py-5 text-base md:text-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-all duration-300 resize-none" />
             </div>
 
-            <div className="flex justify-center pt-6">
-              {/* Note: Changed type="button" back to type="submit" so the form handles the click */}
-              <button 
-                type="submit" 
-                disabled={isSent || isSending}
-                className={`
-                  group relative px-12 py-5 rounded-full overflow-hidden transition-all duration-300 ease-out active:scale-90
-                  ${isSent 
-                    ? 'bg-[#272727] text-white' 
-                    : 'bg-white text-black hover:scale-105'} 
-                `}
+            <div className="flex justify-center pt-4 md:pt-6">
+              <button type="submit" disabled={isSent || isSending}
+                className={`group relative px-10 md:px-12 py-4 md:py-5 rounded-full overflow-hidden transition-all duration-300 ease-out active:scale-90 w-full sm:w-auto
+                  ${isSent ? 'bg-[#272727] text-white' : 'bg-white text-black hover:scale-105'}`}
               >
-                {!isSent && !isSending && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                )}
-                
-                <span className={`relative z-10 font-bold tracking-wider text-lg transition-colors duration-300 ${!isSent && !isSending && 'group-hover:text-white'}`}>
+                {!isSent && !isSending && <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />}
+                <span className={`relative z-10 font-bold tracking-wider text-base md:text-lg transition-colors duration-300 ${!isSent && !isSending && 'group-hover:text-white'}`}>
                   {isSending ? 'Sending...' : isSent ? 'Message Sent' : 'Send Message'}
                 </span>
               </button>
@@ -544,85 +417,67 @@ building interactive experiences, digital products, and immersive systems that p
         </div>
       </section>
 
-      {/* --- PREMIUM PRO FOOTER --- */}
-      <footer className="relative pt-24 pb-12 px-6 md:px-12 bg-[#020202] border-t border-white/5 overflow-hidden">
-        {/* Subtle Background Glow */}
+      <footer className="relative pt-16 md:pt-24 pb-8 md:pb-12 px-6 md:px-12 bg-[#020202] border-t border-white/5 overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-b from-purple-900/10 to-transparent blur-[100px] rounded-full pointer-events-none" />
 
         <div className="relative max-w-[1600px] mx-auto z-10">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-8 mb-20">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 mb-16 md:mb-20">
             
-            {/* Column 1: Brand & Status */}
-            <div className="space-y-8 md:col-span-5 lg:col-span-6">
-              <div className="text-6xl font-bold tracking-tighter bg-gradient-to-r from-white to-gray-500 bg-clip-text text-transparent">
-                JEE.
-              </div>
-              <p className="text-gray-400 max-w-sm leading-relaxed text-lg">
+            <div className="space-y-6 md:space-y-8 md:col-span-5 lg:col-span-6">
+              <div className="text-5xl md:text-6xl font-bold tracking-tighter bg-gradient-to-r from-white to-gray-500 bg-clip-text text-transparent">JEE.</div>
+              <p className="text-gray-400 max-w-sm leading-relaxed text-base md:text-lg">
                 Crafting premium digital experiences, kinetic structures, and futuristic web applications.
               </p>
-              
-              {/* Pro Touch: Pulsing Availability Status */}
-              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10">
+              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 w-fit">
                 <span className="relative flex h-2.5 w-2.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
                 </span>
-                <span className="text-sm text-gray-300 font-medium tracking-wide">Available for freelance projects</span>
+                <span className="text-xs md:text-sm text-gray-300 font-medium tracking-wide">Available for freelance projects</span>
               </div>
             </div>
 
-           
-            {/* Column 2: Social Links */}
-            {/* Column 2: Social Links & Email */}
             <div className="space-y-6 md:col-span-3 lg:col-span-3">
               <h4 className="text-white font-semibold tracking-widest uppercase text-xs">Connect</h4>
               <div className="flex flex-col gap-4">
-                
-                {/* --- NEW EMAIL LINK --- */}
                 <a href="mailto:hello@jee.codes" className="text-gray-400 hover:text-white flex items-center gap-4 transition-colors group w-fit">
-                  <div className="p-2.5 rounded-full bg-white/5 border border-white/10 group-hover:border-purple-500/50 group-hover:bg-purple-500/10 transition-all duration-300">
-                    <Mail className="w-4 h-4" />
-                  </div>
-                  <span className="font-medium tracking-wide">hello@jee.codes</span>
+                  <div className="p-2 md:p-2.5 rounded-full bg-white/5 border border-white/10 group-hover:border-purple-500/50 group-hover:bg-purple-500/10 transition-all duration-300"><Mail className="w-4 h-4" /></div>
+                  <span className="font-medium tracking-wide text-sm md:text-base">hello@jee.codes</span>
                 </a>
-
-                {/* Existing Social Links */}
                 <a href="https://github.com/yourusername" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white flex items-center gap-4 transition-colors group w-fit">
-                  <div className="p-2.5 rounded-full bg-white/5 border border-white/10 group-hover:border-purple-500/50 group-hover:bg-purple-500/10 transition-all duration-300"><GithubIcon className="w-4 h-4" /></div>
-                  <span className="font-medium tracking-wide">GitHub</span>
+                  <div className="p-2 md:p-2.5 rounded-full bg-white/5 border border-white/10 group-hover:border-purple-500/50 group-hover:bg-purple-500/10 transition-all duration-300"><GithubIcon className="w-4 h-4" /></div>
+                  <span className="font-medium tracking-wide text-sm md:text-base">GitHub</span>
                 </a>
                 <a href="https://linkedin.com/in/yourusername" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white flex items-center gap-4 transition-colors group w-fit">
-                  <div className="p-2.5 rounded-full bg-white/5 border border-white/10 group-hover:border-purple-500/50 group-hover:bg-purple-500/10 transition-all duration-300"><LinkedinIcon className="w-4 h-4" /></div>
-                  <span className="font-medium tracking-wide">LinkedIn</span>
+                  <div className="p-2 md:p-2.5 rounded-full bg-white/5 border border-white/10 group-hover:border-purple-500/50 group-hover:bg-purple-500/10 transition-all duration-300"><LinkedinIcon className="w-4 h-4" /></div>
+                  <span className="font-medium tracking-wide text-sm md:text-base">LinkedIn</span>
                 </a>
                 <a href="https://twitter.com/yourusername" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white flex items-center gap-4 transition-colors group w-fit">
-                  <div className="p-2.5 rounded-full bg-white/5 border border-white/10 group-hover:border-purple-500/50 group-hover:bg-purple-500/10 transition-all duration-300"><XIcon className="w-4 h-4" /></div>
-                  <span className="font-medium tracking-wide">X (Twitter)</span>
+                  <div className="p-2 md:p-2.5 rounded-full bg-white/5 border border-white/10 group-hover:border-purple-500/50 group-hover:bg-purple-500/10 transition-all duration-300"><XIcon className="w-4 h-4" /></div>
+                  <span className="font-medium tracking-wide text-sm md:text-base">X (Twitter)</span>
                 </a>
               </div>
             </div>
 
-            {/* Column 3: Professional Platforms */}
             <div className="space-y-6 md:col-span-4 lg:col-span-3">
               <h4 className="text-white font-semibold tracking-widest uppercase text-xs">Freelance</h4>
               <div className="flex flex-col gap-4">
                 <a href="https://upwork.com/freelancers/yourprofile" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white flex items-center gap-4 transition-colors group w-fit">
-                  <div className="p-2.5 rounded-full bg-white/5 border border-white/10 group-hover:border-green-500/50 group-hover:bg-green-500/10 transition-all duration-300"><Briefcase className="w-4 h-4" /></div>
-                  <span className="font-medium tracking-wide">Upwork</span>
+                  <div className="p-2 md:p-2.5 rounded-full bg-white/5 border border-white/10 group-hover:border-green-500/50 group-hover:bg-green-500/10 transition-all duration-300"><Briefcase className="w-4 h-4" /></div>
+                  <span className="font-medium tracking-wide text-sm md:text-base">Upwork</span>
                 </a>
                 <a href="https://fiverr.com/yourprofile" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white flex items-center gap-4 transition-colors group w-fit">
-                  <div className="p-2.5 rounded-full bg-white/5 border border-white/10 group-hover:border-green-500/50 group-hover:bg-green-500/10 transition-all duration-300"><ExternalLink className="w-4 h-4" /></div>
-                  <span className="font-medium tracking-wide">Fiverr</span>
+                  <div className="p-2 md:p-2.5 rounded-full bg-white/5 border border-white/10 group-hover:border-green-500/50 group-hover:bg-green-500/10 transition-all duration-300"><ExternalLink className="w-4 h-4" /></div>
+                  <span className="font-medium tracking-wide text-sm md:text-base">Fiverr</span>
                 </a>
               </div>
             </div>
 
           </div>
 
-          {/* Bottom Copyright Bar */}
-          <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-6">
-            <p className="text-sm text-gray-500 tracking-wide">© {new Date().getFullYear()} Alex Chen. All rights reserved.</p>
-            <div className="flex gap-8 text-sm text-gray-500 font-medium">
+          <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6 text-center md:text-left">
+            <p className="text-xs md:text-sm text-gray-500 tracking-wide">© {new Date().getFullYear()} JEE. All rights reserved.</p>
+            <div className="flex gap-6 md:gap-8 text-xs md:text-sm text-gray-500 font-medium">
               <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
               <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
             </div>
