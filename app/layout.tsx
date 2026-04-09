@@ -4,8 +4,25 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'JEE | Digital Experiences & Development',
   description: 'Portfolio of JEE, a multidisciplinary developer specializing in web development, applications, and creative digital products.',
-  // metadataBase is required for Next.js to properly link your new Open Graph image
   metadataBase: new URL('https://jee.codes'), 
+  
+  // --- THIS IS THE FIX FOR SOCIAL SHARING ---
+  openGraph: {
+    title: 'JEE | Digital Experiences & Development',
+    description: 'Portfolio of JEE, a multidisciplinary developer specializing in web development, applications, and creative digital products.',
+    url: 'https://jee.codes',
+    siteName: 'JEE Portfolio',
+    type: 'website',
+    // Make sure your image file is named exactly like this in your 'app' or 'public' folder!
+    images: [
+      {
+        url: '/opengraph-image.png', 
+        width: 1200,
+        height: 630,
+        alt: 'JEE Digital Portfolio',
+      },
+    ],
+  },
 }
 
 export default function RootLayout({
